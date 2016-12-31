@@ -16,17 +16,19 @@ end
 
 ```elixir
 machine = %TuringMachine{
-  tape: fn _pos -> "_" end,
+  initial_tape: fn _pos -> "_" end,
+  position: 0,
   state: 0,
   accept_states: [3],
-  program: [
-    {0, "_", "Hello,", :right, 1},
-    {1, "_", " "     , :right, 2},
-    {2, "_", "world!", :right, 3},
-  ]
 }
 
-result = TuringMachine.run(machine)
+program = [
+  {0, "_", "Hello,", :right, 1},
+  {1, "_", " "     , :right, 2},
+  {2, "_", "world!", :right, 3},
+]
+
+result = TuringMachine.run(machine, program)
 
 TuringMachine.slice_tape(result, 0, 2)
 # => ["Hello,", " ", "world!"]
@@ -34,11 +36,11 @@ TuringMachine.slice_tape(result, 0, 2)
 
 ## Struct `TuringMachine`
 
-- `tape`: Function from integer to any value, which represents the value of the tape of given position.
+- `initial_tape`: Function from integer to any value, which represents the value of the tape of given position.
+- `tape_hash`: Once evaluated tape values are stored in this map. Avoid touching this.
 - `position`: Integer which indicates the position of the head.
 - `state`: The state of the machine, which can be any type of value.
 - `accept_states`: A list of accept states. The machine stops when its state becomes one of them.
-- `program`: List of 5-tuples which represents the program.
 
 ## Program
 
@@ -82,15 +84,14 @@ program = TuringMachine.Program.from_string("""
 """)
 
 machine = %TuringMachine{
-  tape: fn _pos -> "0" end,
+  initial_tape: fn _pos -> "0" end,
   state: "0",
   accept_states: ["A"],
-  program: program,
 }
 
 # Step 30 times
 Enum.reduce(1..30, machine, fn(_, m) ->
-  TuringMachine.step(m)
+  TuringMachine.step(m, program)
 end)
 |> TuringMachine.slice_tape(0, 6)
 # => ["1", "1", "0", "1", "0", "0", "1"]
@@ -98,7 +99,7 @@ end)
 
 Each line is considered as a command. `0, 0, 1, R, 1` is interpreted into `{"0", "0", "1", :right, "1"}`.
 
-Note that each value for state or tape is treated as string.
+Note that each value for state or tape is treated as a string.
 
 You can specify direction by `R`, `L`, `S`, or `right`, `left`, `stay`, `1`, `-1`, `0`.
 
