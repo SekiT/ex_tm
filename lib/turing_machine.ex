@@ -75,24 +75,21 @@ defmodule TuringMachine do
   Raises when no command is found for the state.
   """
   @spec step(t, Program.t) :: t | none
-  def step(machine, program) do
-    %{state: state, position: position} = machine
-    value = at(machine, position)
-    case Enum.find(program, &match?({^state, ^value, _, _, _}, &1)) do
-      nil ->
-        raise "No command matches for: #{inspect({state, value})}"
-      {_, _, next_value, next_direction, next_state} ->
-        position_diff = case next_direction do
-          :right ->  1
-          :left  -> -1
-          :stay  ->  0
-          diff when is_integer(diff) -> diff
-        end
-        Map.merge(machine, %{
-          tape_hash: Map.put(machine.tape_hash, position, next_value),
-          position:  position + position_diff,
-          state:     next_state
-        })
+  def step(%{state: state, accept_states: accept_states, position: position} = machine, program) do
+    if state in accept_states do
+      machine
+    else
+      value = at(machine, position)
+      case Enum.find(program, &match?({^state, ^value, _, _, _}, &1)) do
+        nil ->
+          raise "No command matches for: #{inspect({state, value})}"
+        {_, _, next_value, next_direction, next_state} ->
+          Map.merge(machine, %{
+            tape_hash: Map.put(machine.tape_hash, position, next_value),
+            position:  position + Program.direction_to_diff(next_direction),
+            state:     next_state
+          })
+      end
     end
   end
 

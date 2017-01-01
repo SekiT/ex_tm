@@ -48,6 +48,18 @@ defmodule TuringMachineTest do
     before_after_pairs = [
       {
         %TuringMachine{
+          initial_tape:  tape0,
+          state:         0,
+          accept_states: [0],
+        },
+        %TuringMachine{
+          initial_tape:  tape0,
+          state:         0,
+          accept_states: [0],
+        }
+      },
+      {
+        %TuringMachine{
           initial_tape: tape0,
           state:        0,
           position:     0,

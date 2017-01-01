@@ -16,4 +16,14 @@ defmodule TuringMachine.Program do
       TuringMachine.state
     }
   ]
+
+  @spec direction_to_diff(direction) :: 1 | -1 | 0
+  def direction_to_diff(direction) do
+    case direction do
+      :right -> 1
+      :left  -> -1
+      :stay  -> 0
+      diff when is_integer(diff) -> diff
+    end
+  end
 end
