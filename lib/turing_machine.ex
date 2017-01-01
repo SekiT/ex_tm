@@ -95,4 +95,18 @@ defmodule TuringMachine do
         })
     end
   end
+
+  @doc """
+  Run the program until the machine state becomes one of its `accept_states`.
+
+  This may go into infinite loop.
+  """
+  @spec run(t, Program.t) :: t | none
+  def run(machine, program) do
+    if machine.state in machine.accept_states do
+      machine
+    else
+      run(step(machine, program), program)
+    end
+  end
 end

@@ -149,4 +149,46 @@ defmodule TuringMachineTest do
       assert_raise(RuntimeError, fn -> TuringMachine.step(machine, program) end)
     end)
   end
+
+  test "run/2" do
+    initial_tape = fn n -> n end
+    machine = %TuringMachine{
+      initial_tape:  initial_tape,
+      state:         0,
+      accept_states: ["E", "A"],
+      position:      0,
+    }
+    program = [
+      {0, 0 , 0, :right, 0},
+      {0, 1 , 0, :stay , 0},
+      {0, 2 , 1, :stay , 0},
+      {0, 3 , 2, :stay , 0},
+      {0, 4 , 4, :left , 1},
+      {1, 0 , 0, :left , 1},
+      {1, -1, 0, :stay , "A"},
+    ]
+    assert TuringMachine.run(machine, program) == %TuringMachine{
+      initial_tape:  initial_tape,
+      tape_hash:     %{-1 => 0, 0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 4},
+      state:         "A",
+      accept_states: ["E", "A"],
+      position:      -1,
+    }
+  end
+
+  test "run/2"
+    <> "raise RuntimeError when the program fails" do
+    machine = %TuringMachine{
+      initial_tape: fn n -> n end,
+      state:        0,
+    }
+    program = [
+      {0, 0, 0, :right, 0},
+      {0, 1, 0, :stay , 0},
+      {0, 2, 1, :stay , 0},
+    ]
+    assert_raise(RuntimeError, fn ->
+      TuringMachine.run(machine, program)
+    end)
+  end
 end
