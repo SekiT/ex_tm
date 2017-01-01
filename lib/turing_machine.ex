@@ -35,6 +35,21 @@ defmodule TuringMachine do
   ]
 
   @doc """
+  Make a `initial_tape` function from `list`.
+
+  Values out of the list range are initialized to `default`.
+
+  Note that `&Enum.at(list, &1, default)` doesn't work for negative positions.
+  """
+  @spec tape_from_list(list(value), value) :: (integer -> value)
+  def tape_from_list(list, default \\ "0") do
+    fn
+      position when position < 0         -> default
+      position when is_integer(position) -> Enum.at(list, position, default)
+    end
+  end
+
+  @doc """
   Get the value of tape at the given position.
   """
   @spec at(t, integer) :: value

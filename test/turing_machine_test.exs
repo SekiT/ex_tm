@@ -8,6 +8,22 @@ defmodule TuringMachineTest do
     end)
   end
 
+  test "tape_from_list/1, 2" do
+    tape1 = TuringMachine.tape_from_list([0, 1, 2])
+    assert tape1.(-1) == "0"
+    assert tape1.(0 ) == 0
+    assert tape1.(1 ) == 1
+    assert tape1.(2 ) == 2
+    assert tape1.(3 ) == "0"
+
+    tape2 = TuringMachine.tape_from_list([0, 1, 2], -1)
+    assert tape2.(-1) == -1
+    assert tape2.(0 ) == 0
+    assert tape2.(1 ) == 1
+    assert tape2.(2 ) == 2
+    assert tape2.(3 ) == -1
+  end
+
   test "at/2" do
     machine_value_pairs = [
       {%TuringMachine{initial_tape: fn n -> n end, tape_hash: %{}      }, 0},
