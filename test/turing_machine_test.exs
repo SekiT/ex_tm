@@ -20,6 +20,21 @@ defmodule TuringMachineTest do
     end)
   end
 
+  test "slice_tape/3" do
+    machine = %TuringMachine{initial_tape: fn n -> n end}
+    assert TuringMachine.slice_tape(machine, 0 , 2 ) == [0, 1, 2]
+    assert TuringMachine.slice_tape(machine, 2 , -2) == [2, 1, 0, -1, -2]
+    assert TuringMachine.slice_tape(machine, 42, 42) == [42]
+
+    machine_with_hash = %TuringMachine{
+      initial_tape: fn n -> n end,
+      tape_hash:    %{1 => "a", 3 => "b"},
+    }
+    assert TuringMachine.slice_tape(machine_with_hash, 1, 3) == ["a", 2, "b"]
+    assert TuringMachine.slice_tape(machine_with_hash, 0, 2) == [0, "a", 2]
+    assert TuringMachine.slice_tape(machine_with_hash, 0, 4) == [0, "a", 2, "b", 4]
+  end
+
   test "step/2" do
     program = [
       {0  , 0  , 1  , :right, 1  },

@@ -46,6 +46,30 @@ defmodule TuringMachine do
   end
 
   @doc """
+  Take values of tape in the given range.
+
+  You can pass `from` greater or less than or equal to `to`.
+  If `from` is less than `to`, values are reversed.
+
+  ```
+  machine = %TuringMachine{initial_tape: fn n -> n end}
+
+  TuringMachine.slice_tape(machine, 0, 2)
+  # => [0, 1, 2]
+
+  TuringMachine.slice_tape(machine, 2, -2)
+  # => [2, 1, 0, -1, -2]
+
+  TuringMachine.slice_tape(machine, 42, 42)
+  # => [42]
+  ```
+  """
+  @spec slice_tape(t, integer, integer) :: list(value)
+  def slice_tape(machine, from, to) do
+    Enum.map(from..to, &at(machine, &1))
+  end
+
+  @doc """
   Process 1 step for the `machine` with the `program`.
 
   Raises when no command is found for the state.
