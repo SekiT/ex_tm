@@ -90,9 +90,7 @@ machine = %TuringMachine{
 }
 
 # Step 30 times
-Enum.reduce(1..30, machine, fn(_, m) ->
-  TuringMachine.step(m, program)
-end)
+TuringMachine.step_times(machine, program, 30)
 |> TuringMachine.slice_tape(0, 6)
 # => ["1", "1", "0", "1", "0", "0", "1"]
 ```

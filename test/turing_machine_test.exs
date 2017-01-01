@@ -150,6 +150,114 @@ defmodule TuringMachineTest do
     end)
   end
 
+  test "step_times/3" do
+    tape0 = fn _ -> 0 end
+    machine_before = %TuringMachine{initial_tape: tape0, state: 0}
+    program = [
+      {0, 0, 1, :right, 1},
+      {1, 0, 1, :right, 2},
+      {2, 0, 1, :right, "A"},
+    ]
+    times_after_pairs = [
+      {
+        0,
+        machine_before,
+      },
+      {
+        1,
+        %TuringMachine{
+          initial_tape: tape0,
+          tape_hash:    %{0 => 1},
+          state:        1,
+          position:     1,
+        }
+      },
+      {
+        2,
+        %TuringMachine{
+          initial_tape: tape0,
+          tape_hash:    %{0 => 1, 1 => 1},
+          state:        2,
+          position:     2,
+        }
+      },
+      {
+        3,
+        %TuringMachine{
+          initial_tape: tape0,
+          tape_hash:    %{0 => 1, 1 => 1, 2 => 1},
+          state:        "A",
+          position:     3,
+        }
+      },
+      {
+        4,
+        %TuringMachine{
+          initial_tape: tape0,
+          tape_hash:    %{0 => 1, 1 => 1, 2 => 1},
+          state:        "A",
+          position:     3,
+        }
+      },
+    ]
+    Enum.each(times_after_pairs, fn {times, machine_after} ->
+      assert TuringMachine.step_times(machine_before, program, times) == machine_after
+    end)
+  end
+
+  test "step_times/3"
+    <> "doesn't raise when it stops before error" do
+
+    tape0 = fn _ -> 0 end
+    machine_before = %TuringMachine{initial_tape: tape0, state: 0}
+    program = [
+      {0, 0, 1, :right, 1},
+      {1, 0, 1, :right, 2},
+    ]
+    times_after_pairs = [
+      {
+        0,
+        machine_before
+      },
+      {
+        1,
+        %TuringMachine{
+          initial_tape: tape0,
+          tape_hash:    %{0 => 1},
+          state:        1,
+          position:     1,
+        }
+      },
+      {
+        2,
+        %TuringMachine{
+          initial_tape: tape0,
+          tape_hash:    %{0 => 1, 1 => 1},
+          state:        2,
+          position:     2,
+        }
+      }
+    ]
+    Enum.each(times_after_pairs, fn {times, machine_after} ->
+      assert TuringMachine.step_times(machine_before, program, times) == machine_after
+    end)
+  end
+
+  test "step_times/3"
+    <> "raise when the program fails" do
+
+    machine = %TuringMachine{state: 0}
+    program = [
+      {0, "0", "0", :right, 1},
+      {1, "0", "0", :right, 2},
+    ]
+    Enum.each([3, 4], fn times ->
+      assert_raise(RuntimeError, fn ->
+        TuringMachine.step_times(machine, program, times)
+      end)
+    end)
+  end
+
   test "run/2" do
     initial_tape = fn n -> n end
     machine = %TuringMachine{

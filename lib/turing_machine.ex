@@ -97,6 +97,19 @@ defmodule TuringMachine do
   end
 
   @doc """
+  Steps `n` times.
+  """
+  @spec step_times(t, Program.t, non_neg_integer) :: t | none
+  def step_times(machine, _program, 0), do: machine
+  def step_times(machine, program, times) do
+    if machine.state in machine.accept_states do
+      machine
+    else
+      step_times(step(machine, program), program, times - 1)
+    end
+  end
+
+  @doc """
   Run the program until the machine state becomes one of its `accept_states`.
 
   This may go into infinite loop.
