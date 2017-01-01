@@ -13,7 +13,10 @@ defmodule TuringMachine.Mixfile do
       package: package(),
       source_url: @github_url,
       deps: deps(),
-      docs: [extras: ["README.md"]],
+      docs: [
+        main:   "TuringMachine",
+        extras: ["README.md"],
+      ],
       dialyzer: [plt_add_deps: :transitive],
       test_coverage: [tool: ExCoveralls],
     ]
