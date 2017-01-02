@@ -21,7 +21,7 @@ defmodule TuringMachine do
   Which is the default `initial_tape` for a `TuringMachine`.
 
   Note that `"0"` is a string, not an integer.
-  It fits to programs `from_string/1` or `from_file/1` deal with strings.
+  It fits to programs by `Program.from_string/1` or `Program.from_file/1`.
   """
   @spec zero_tape(integer) :: String.t
   def zero_tape(_pos), do: "0"

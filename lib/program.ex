@@ -26,4 +26,42 @@ defmodule TuringMachine.Program do
       diff when is_integer(diff) -> diff
     end
   end
+
+  @spec direction_from_string(String.t) :: {:ok, direction} | :error
+  %{
+    "R"     => :right,
+    "L"     => :left,
+    "S"     => :stay,
+    "right" => :right,
+    "left"  => :left,
+    "stay"  => :stay,
+    "1"     => 1,
+    "-1"    => -1,
+    "0"     => 0,
+  }
+  |> Enum.each(fn {dir_str, dir} ->
+    def direction_from_string(unquote(dir_str)), do: {:ok, unquote(dir)}
+  end)
+  def direction_from_string(_other), do: :error
+
+  @spec from_string(String.t) :: t
+  def from_string(code) do
+    code
+    |> String.replace(~r/#.*/, "")
+    |> String.split("\n")
+    |> Enum.map(&String.split(&1, ","))
+    |> Enum.filter_map(
+      fn list -> length(list) == 5 end,
+      fn list -> Enum.map(list, &String.trim/1) end
+    )
+    |> Enum.filter_map(
+      fn [_, _, _, dir_str, _] ->
+        match?({:ok, _}, direction_from_string(dir_str))
+      end,
+      fn [state0, value0, value1, dir_str, state1] ->
+        {:ok, dir} = direction_from_string(dir_str)
+        {state0, value0, value1, dir, state1}
+      end
+    )
+  end
 end
