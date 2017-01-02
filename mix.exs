@@ -31,7 +31,6 @@ defmodule TuringMachine.Mixfile do
       {:ex_doc     , "~> 0.14.5", only: :dev },
       {:dialyxir   , "~> 0.4.1" , only: :dev },
       {:credo      , "~> 0.5.3" , only: :dev },
-      {:meck       , "~> 0.8.4" , only: :test},
       {:excoveralls, "~> 0.5.7" , only: :test},
     ]
   end
