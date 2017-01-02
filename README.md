@@ -1,5 +1,9 @@
 # ex_tm
 
+[![hex.pm version](https://img.shields.io/hexpm/v/ex_tm.svg)](https://hex.pm/packages/ex_tm)
+[![travis-ci status](https://travis-ci.org/SekiT/ex_tm.svg?branch=master)](https://travis-ci.org/SekiT/ex_tm)
+[![Coverage Status](https://coveralls.io/repos/github/SekiT/ex_tm/badge.svg)](https://coveralls.io/github/SekiT/ex_tm)
+
 Just proving Elixir is turing complete.
 
 ## Installation
