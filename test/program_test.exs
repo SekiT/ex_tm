@@ -65,4 +65,21 @@ defmodule TuringMachine.ProgramTest do
       assert Program.from_string(code) == program
     end)
   end
+
+  test "from_file/1" do
+    assert Program.from_file("test/test_programs/empty.tm") == []
+    assert Program.from_file("test/test_programs/sample.tm") == [
+      {"0", "0", "1", :right, "1"},
+      {"1", "0", "1", :right, "2"},
+      {"2", "0", "1", 1, "3"},
+      {"3", "0", "1", :left, "4"},
+      {"4", "1", "1", :left, "5"},
+      {"5", "1", "1", -1, "6"},
+      {"command", "with", "string", :stay, "0.1"},
+      {"another", "stay", "command", :stay, "here"},
+      {"even", "more", "one", 0, "too"}
+    ]
+
+    assert_raise(File.Error, fn -> Program.from_file("nonexisting") end)
+  end
 end

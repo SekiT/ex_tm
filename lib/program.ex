@@ -96,4 +96,14 @@ defmodule TuringMachine.Program do
       end
     )
   end
+
+  @doc """
+  Reads code from a file.
+
+  Raises when it fails to read the file.
+  """
+  @spec from_file(String.t) :: t | none
+  def from_file(path) do
+    from_string(File.read!(path))
+  end
 end
