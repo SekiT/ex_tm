@@ -4,6 +4,10 @@ defmodule TuringMachine.Program do
 
   You can define programs directly constructing list of 5-tuples,
   or generating from codes by `from_string/1` or `from_file/1`.
+
+  The 5-tuple `{0, 1, 2, :right, 3}` means a command that
+  when the machine state is `0`, and the value of tape at now position is `1`,
+  then turn it into `2`, go `:right` and make the machine state `3`.
   """
 
   @type direction :: :right | :left | :stay | 1 | -1 | 0
@@ -17,6 +21,9 @@ defmodule TuringMachine.Program do
     }
   ]
 
+  @doc """
+  Transforms `direction` into diff of position.
+  """
   @spec direction_to_diff(direction) :: 1 | -1 | 0
   def direction_to_diff(direction) do
     case direction do
@@ -27,6 +34,14 @@ defmodule TuringMachine.Program do
     end
   end
 
+  @doc """
+  Interprets string to a direction.
+
+  Returns `:error` when it fails, `{:ok, direction}` otherwise.
+
+  `R`, `L`, `S`, `right`, `left`, `stay`, `1`, `-1`, `0` are supported
+  (case sensitive).
+  """
   @spec direction_from_string(String.t) :: {:ok, direction} | :error
   %{
     "R"     => :right,
@@ -44,6 +59,23 @@ defmodule TuringMachine.Program do
   end)
   def direction_from_string(_other), do: :error
 
+  @doc """
+  Generates a program from the given `code`.
+
+  Each line of code is converted into a command.
+  For example, `"0, 1, 2, R, 3"` becomes `{"0", "1", "2", :right, "3"}`.
+
+  A command is described by comma separated 5-tuple.
+  Spaces before and after each element are trimmed.
+
+  Characters after `#` is ignored, so you can insert comments like:
+  `"0, 1, 2, R, 3 # This is a comment"`
+
+  The direction can be written as one of the followings:
+  `R`, `L`, `S`, `right`, `left`, `stay`, `1`, `-1`, `0`
+
+  Lines that doesn't match to the command pattern are just ignored.
+  """
   @spec from_string(String.t) :: t
   def from_string(code) do
     code
