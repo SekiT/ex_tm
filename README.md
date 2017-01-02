@@ -57,12 +57,12 @@ The direction is one of `:right`, `:left`, `:stay`, `1`, `-1`, `0`.
 You can also make program from string:
 
 ```elixir
-program = TuringMachine.Program.from_string("""
-# Make 110100100010000...
+program = TuringMachine.Program.from_string """
+# Make 10100100010000...
 0, 0, 1, R, 1
-1, 0, 1, R, 1
+1, 0, 1, R, 2
 2, 0, 1, R, 3
-3, 0, 1, R, 4
+3, 0, 1, L, 4
 
 4, 0, 0, L, 4
 4, 1, 1, L, 5
@@ -81,7 +81,7 @@ program = TuringMachine.Program.from_string("""
 10, 1, 1, R, 11
 11, 0, 0, R, 11
 11, 1, 0, R, 1
-""")
+"""
 
 machine = %TuringMachine{
   initial_tape: fn _pos -> "0" end,
@@ -89,18 +89,20 @@ machine = %TuringMachine{
   accept_states: ["A"],
 }
 
-# Step 30 times
 TuringMachine.step_times(machine, program, 30)
 |> TuringMachine.slice_tape(0, 6)
-# => ["1", "1", "0", "1", "0", "0", "1"]
+# => ["1", "0", "1", "0", "0", "1", "0"]
 ```
 
-Each line is considered as a command. `0, 0, 1, R, 1` is interpreted into `{"0", "0", "1", :right, "1"}`.
+Each line is considered as a command.
+`0, 0, 1, R, 1` is interpreted into `{"0", "0", "1", :right, "1"}`.
 
 Note that each value for state or tape is treated as a string.
 
 You can specify direction by `R`, `L`, `S`, or `right`, `left`, `stay`, `1`, `-1`, `0`.
 
 Characters after `#` in a line are ignored, so you can put comments.
+
+Lines that cannot be interpreted as a command are just ignored.
 
 You can also use `TuringMachine.Program.from_file/1` to read code from file.
