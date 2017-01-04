@@ -85,6 +85,30 @@ defmodule TuringMachine do
   end
 
   @doc """
+  Evaluate `initial_tape` function and store the results in `tape_hash`.
+
+  Useful to avoid duplicate evaluations when the machine is intended to run
+  multiple programs.
+
+  You can pass list or range of positions:
+  ```
+  machine = %TuringMachine{initial_tape: fn n -> n * 2 end}
+
+  TuringMachine.eval_tape(machine, [1, 3, 5]).tape_hash
+  # => %{1 => 2, 3 => 6, 5 => 10}
+
+  TuringMachine.eval_tape(machine, -1..2).tape_hash
+  # => %{-1 => -2, 0 => 0, 1 => 2, 2 => 4}
+  """
+  @spec eval_tape(t, list(integer) | Range.t) :: t
+  def eval_tape(machine, positions) do
+    evaluated = Enum.into(positions, %{}, fn pos ->
+      {pos, at(machine, pos)}
+    end)
+    update_in(machine.tape_hash, &Map.merge(&1, evaluated))
+  end
+
+  @doc """
   Process 1 step for the `machine` with the `program`.
 
   Raises when no command is found for the state.
