@@ -12,7 +12,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 ```elixir
 def deps do
-  [{:ex_tm, "~> 0.1.0"}]
+  [{:ex_tm, "~> 1.0.1"}]
 end
 ```
 
