@@ -6,7 +6,7 @@ defmodule TuringMachine.Mixfile do
   def project do
     [
       app: :ex_tm,
-      version: "1.0.1",
+      version: "1.1.0",
       elixir: "~> 1.4",
       name: "ex_tm",
       description: description(),
