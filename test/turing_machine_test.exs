@@ -51,6 +51,21 @@ defmodule TuringMachineTest do
     assert TuringMachine.slice_tape(machine_with_hash, 0, 4) == [0, "a", 2, "b", 4]
   end
 
+  test "map_tape/2" do
+    machine = %TuringMachine{initial_tape: fn n -> n * 2 end, tape_hash: %{1 => 10, 3 => 20}}
+    new_machine = TuringMachine.map_tape(machine, fn v -> v + 1 end)
+    assert new_machine.tape_hash == %{1 => 11, 3 => 21}
+    assert new_machine.initial_tape.(-42) == -83
+    assert new_machine.initial_tape.(-2 ) == -3
+    assert new_machine.initial_tape.(-1 ) == -1
+    assert new_machine.initial_tape.(0  ) == 1
+    assert new_machine.initial_tape.(1  ) == 3
+    assert new_machine.initial_tape.(2  ) == 5
+    assert new_machine.initial_tape.(3  ) == 7
+    assert new_machine.initial_tape.(4  ) == 9
+    assert new_machine.initial_tape.(42 ) == 85
+  end
+
   test "eval_tape/2" do
     initial_tape = fn n -> n * 2 end
     machine = %TuringMachine{initial_tape: initial_tape}

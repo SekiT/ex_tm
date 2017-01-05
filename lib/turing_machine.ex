@@ -85,6 +85,29 @@ defmodule TuringMachine do
   end
 
   @doc """
+  Maps the tape values by the given function.
+
+  The evaluated values in `tape_hash` are also evaluated at this time,
+  while not yet evaluated `initial_tape` values are not.
+
+  ```
+  machine = %TuringMachine{initial_tape: fn n -> n end, tape_hash: %{1 => 10}}
+  new_machine = TuringMachine.map_tape(machine, fn n -> n * 2 end)
+
+  new_machine.tape_hash
+  # => %{1 => 20}
+  TuringMachine.slice_tape(new_machine, 0, 2)
+  # => [0, 20, 4]
+  ```
+  """
+  @spec map_tape(t, (value -> value)) :: t
+  def map_tape(machine, f) do
+    new_initial_tape = fn pos -> f.(machine.initial_tape.(pos)) end
+    new_tape_hash = Enum.into(machine.tape_hash, %{}, fn {pos, val} -> {pos, f.(val)} end)
+    Map.merge(machine, %{initial_tape: new_initial_tape, tape_hash: new_tape_hash})
+  end
+
+  @doc """
   Evaluate `initial_tape` function and store the results in `tape_hash`.
 
   Useful to avoid duplicate evaluations when the machine is intended to run
